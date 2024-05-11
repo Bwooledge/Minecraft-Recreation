@@ -4,4 +4,6 @@ The basis of this project is recreating the basic features of the game Minecraft
 
 Besides those improvements, I added numerous novel features to imitate the game Minecraft.
 
-Movement inputs are WASD, SHIFT is crouch, SPACE is jump, and double-tapping W is sprint. Camera movement is controlled by the mouse and blocks can be placed and broken with the right and left mouse buttons, respectively.
+To run the sample scene I created, run the GraphicsRunner.java file. To edit the scene, change objects in the Simulation.java file. 
+
+Movement inputs are WASD, SHIFT is crouch, SPACE is jump, double-tapping W is sprint, and the number keys are selecting blocks. Camera movement is controlled by the mouse and blocks can be placed and broken with the right and left mouse buttons, respectively.
