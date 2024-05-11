@@ -92,7 +92,7 @@ public class Simulation extends JPanel implements Runnable {
 	public static void newBlock(int x, int y, int z, Block b)
 	{
 		all_blocks[z][y][x] = b;
-		b.setCoords(x, y, z);
+		b.coord = new int[]{x, y, z};
 	}
 	
 	public static void removeBlock(int x, int y, int z)

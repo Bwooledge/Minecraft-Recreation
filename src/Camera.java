@@ -5,21 +5,25 @@ import java.awt.Graphics2D;
 import java.awt.geom.Arc2D;
 
 public class Camera {
+	//position and orientation
 	public double[] position;
 	public double[] normal = new double[] {0, 0, 1};
 	public double[] right = new double[] {1, 0, 0};
 	public double[] up = new double[] {0, 1, 0};
 	
+	//used in rendering
 	public double FOV = 90 * Math.PI / 180;
 	public double fov_slope;
 	public int clipping_distance;
 	
+	//mouse movement
 	public double deltaX = 0;
 	public double deltaY = 0;
 	public double sensitivity_x = 0.0015; 
 	public double sensitivity_y = 0.0025;
 	public double roughness = 0.5;
 	
+	//block placement and destruction
 	public double place_range = 100;
 	public int destroyed = 0;
 	public int destroy_speed = 20;
@@ -99,6 +103,7 @@ public class Camera {
 		up[2] = d * Math.sin(theta1);
 	}
 	
+	//makes each vector 1 long
 	public void normalizeVectors()
 	{
 		double normal_len = Math.sqrt(Math.pow(normal[0], 2) + Math.pow(normal[1], 2) + Math.pow(normal[2], 2));

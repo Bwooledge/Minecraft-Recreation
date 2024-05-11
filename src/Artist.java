@@ -7,19 +7,19 @@ import java.util.Arrays;
 
 public class Artist {
 	static ArrayList<Block> drawn_blocks = new ArrayList<Block>();
+	
 	static Camera cam = Simulation.cam;
 	static Player p = Simulation.player;
-	static int clipping_dist = cam.clipping_distance;
-	static double fov_slope = cam.fov_slope;
+	
+	//for drawing current block UI in bottom left
 	static int bsize = 112;
 	static int bthick = 6;
 	
 	public static void drawEverything(Graphics g)
 	{
-		//initialize useful variables
 		double[] n = cam.normal;
 		
-		//draw background
+		//background
 		g.setColor(new Color(150, 150, 255));
 		g.fillRect(0,  0, GraphicsRunner.WIDTH, GraphicsRunner.HEIGHT);
 		
@@ -40,9 +40,9 @@ public class Artist {
 			if(z > b.scale / 2 && z / ray_len > 0.2)
 				b.draw(g, adj_pos);
 			
-			//render blocks right next to you
+			//render blocks right next to camera
 			else if(z > -5 && z < 10 && adj_pos[0] * n[0] + adj_pos[1] * n[1] < 0.2)
-					b.draw(g,  adj_pos);
+				b.draw(g, adj_pos);
 		}
 		
 		//draw crosshair
@@ -50,11 +50,13 @@ public class Artist {
 		g.fillRect(GraphicsRunner.WIDTH / 2 - 2, GraphicsRunner.HEIGHT / 2 - 25, 4, 50);
 		g.fillRect(GraphicsRunner.WIDTH / 2 - 25, GraphicsRunner.HEIGHT / 2 - 2, 50, 4);
 		
-		//draw current block
+		//draw current block UI
 		if(cam.cb != null)
 		{
 			Block b = cam.cb;
 			int res = b.resolution;
+			
+			//draw each pixel
 			for(int i = 0; i < b.resolution; i++)
 			{
 				for(int j = 0; j < b.resolution; j++)
@@ -65,6 +67,8 @@ public class Artist {
 					g.fillRect(50 + j * bsize/res, GraphicsRunner.HEIGHT - bsize - 40 + i * bsize/res, bsize/res, bsize/res);
 				}
 			}
+			
+			//outline
 			((Graphics2D)g).setStroke(new BasicStroke(bthick));
 			g.setColor(new Color(175, 175, 175, 225));
 			g.drawRect(50 - bthick/2, GraphicsRunner.HEIGHT - bsize - 40 - bthick/2, bsize + bthick, bsize + bthick);
@@ -80,7 +84,7 @@ public class Artist {
 			Block b = blocks.get(i);
 			double dist = getDist(pp, b.coord);
 			
-			//sort faces for invisible blocks
+			//sort faces by distance for invisible blocks
 			if(b.invisible)
 			{
 				double[] adj_pp = {pp[0] - b.coord[0] * 16, pp[1] - b.coord[1] * 16, pp[2] - b.coord[2] * 16};
@@ -112,7 +116,6 @@ public class Artist {
 				blocks.set(j + 1, blocks.get(j));
 				j--;
 			}
-				
 			blocks.set(j + 1, b);
 		}	
 		return blocks;
@@ -134,7 +137,7 @@ public class Artist {
 	//doesn't draw faces of the blocks that are touching other blocks
 	public static void updateFaces()
 	{
-		//NOTE: could try to move through entire array in checkerboard to maximize efficiency; z+=2 and start at staggered spots wth % and disable two faces at once
+		//NOTE: could optimize by moving through entire array in checkerboard pattern; z+=2, % for staggered starts, and disable two faces at once
 		Block[][][] blocks = Simulation.all_blocks;
 		double[] pp = {p.position[0] + cam.position[0], p.position[1] + cam.position[1], p.position[2] + cam.position[2]};
 		for(int z = 0; z < blocks.length; z++)
@@ -145,22 +148,17 @@ public class Artist {
 					if(b == null || b.invisible && !b.empty) continue;
 					b.shown_faces = new ArrayList<Integer>(Arrays.asList(0, 1, 2, 3, 4, 5));
 					
-					//front
+					//order: front, right, back, left, top, bottom
 					if (z > 0 && blocks[z - 1][y][x] != null && (!blocks[z - 1][y][x].invisible || blocks[z - 1][y][x].empty && blocks[z][y][x].empty)) 
 						b.shown_faces.remove(b.shown_faces.indexOf(0));
-					//right
 					if (x < blocks[0][0].length - 1 && blocks[z][y][x + 1] != null && (!blocks[z][y][x + 1].invisible || blocks[z][y][x + 1].empty && blocks[z][y][x].empty)) 
 						b.shown_faces.remove(b.shown_faces.indexOf(1));					
-					//back
 					if (z < blocks.length - 1 && blocks[z + 1][y][x] != null && (!blocks[z + 1][y][x].invisible || blocks[z + 1][y][x].empty && blocks[z][y][x].empty)) 
 						b.shown_faces.remove(b.shown_faces.indexOf(2));	
-					//left
 					if (x > 0 && blocks[z][y][x - 1] != null && (!blocks[z][y][x - 1].invisible || blocks[z][y][x - 1].empty && blocks[z][y][x].empty)) 
 						b.shown_faces.remove(b.shown_faces.indexOf(3));	
-					//top
 					if(y < blocks[0].length - 1 && blocks[z][y + 1][x] != null && (!blocks[z][y + 1][x].invisible || blocks[z][y + 1][x].empty && blocks[z][y][x].empty)) 
 						b.shown_faces.remove(b.shown_faces.indexOf(4));
-					//bottom
 					if(y > 0 && blocks[z][y - 1][x] != null && (!blocks[z][y - 1][x].invisible || blocks[z][y - 1][x].empty && blocks[z][y][x].empty)) 
 						b.shown_faces.remove(b.shown_faces.indexOf(5));			
 				}
