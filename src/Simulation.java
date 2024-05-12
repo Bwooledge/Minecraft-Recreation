@@ -20,19 +20,22 @@ public class Simulation extends JPanel implements Runnable {
 	public static Graphics g;
 	public static Camera cam;
 	public static final int FRAMES = 60;
-	
-	public static Player player = new Player(new double[] {300, 64, 300}, 5, 24);
-
-	public static Block[][][] all_blocks = new Block[64][16][64];
-	
 	public static final int BLOCK_SIZE = 16;
 	
+	public static Player player = new Player(new double[] {300, 64, 300}, 5, 24);
+	public static Block[][][] all_blocks = new Block[64][16][64];
+	
+	public static double[] light_dir = {0.7/1.74, -1/1.74, 0.5/1.74};
+	public static double light_intensity = 0.3;
+	
+	//music player
 	public static MediaPlayer mediaPlayer;
 	
 	public Simulation()
 	{
 		setVisible(true);
 		
+		//plane of blank blocks
 		for(int i = 16; i < 48; i++)
 			for(int j = 3; j < 4; j++)
 				for(int k = 16; k < 48; k++)
@@ -40,7 +43,7 @@ public class Simulation extends JPanel implements Runnable {
 							new int[][][] {{{0}}},
 						new int[] {0, 0, 0, 0, 0, 0}, 1, new Color(86, 30, 227), false, false));
 		
-		//tree on grass
+		//grass platform with a tree on top
 		for(int i = 0; i < 5; i++)
 			for(int j = 0; j < 5; j++)
 				newBlock(21 + i, 4, 21 + j, new GrassBlock());
@@ -94,17 +97,13 @@ public class Simulation extends JPanel implements Runnable {
 		all_blocks[z][y][x] = b;
 		b.coord = new int[]{x, y, z};
 	}
-	
-	public static void removeBlock(int x, int y, int z)
-	{
-		all_blocks[z][y][x] = null;
-	}
 
 	@Override
 	public void run() {
 		repaint();
 		try
 		{
+			//loop that maintains a constant FPS
 		   	long executionStamp = System.nanoTime(); 
 		   	while(true)
 		   	{

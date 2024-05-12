@@ -24,6 +24,7 @@ public class GraphicsRunner extends JFrame implements KeyListener, MouseListener
     
 	public GraphicsRunner() 
 	{
+		//initializing application window
 		super("Minecraft");
 		setSize(WIDTH, HEIGHT);
 		setExtendedState(JFrame.MAXIMIZED_BOTH); 
@@ -71,7 +72,7 @@ public class GraphicsRunner extends JFrame implements KeyListener, MouseListener
 		else if(e.getKeyCode() >= 48 && e.getKeyCode() <= 57) 
 			cam.setCurrentBlock(e.getKeyCode() - 48);
 
-		//quit out
+		//quit
 		else if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
 			dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));	
 	}
@@ -94,17 +95,13 @@ public class GraphicsRunner extends JFrame implements KeyListener, MouseListener
 		else if (e.getKeyCode() == KeyEvent.VK_SHIFT)
 			player.uncrouch();
 	}
-	
-	@Override
-	public void keyTyped(KeyEvent e) {}
 
 	public void mouseMoved(MouseEvent e) {
-        int deltaX = e.getX() - centeredX;
-        int deltaY = -(e.getY() - centeredY);
-        
-        cam.deltaX += deltaX;
-        cam.deltaY += deltaY;
+        //change where the camera should be facing
+        cam.deltaX += e.getX() - centeredX;
+        cam.deltaY += -(e.getY() - centeredY);
 
+        //recenter mouse
         centeredX = WIDTH / 2 + (1920 - WIDTH)/2;
         centeredY = HEIGHT / 2 + (1080 - HEIGHT)/2;
         robot.mouseMove(centeredX, centeredY);
@@ -132,12 +129,13 @@ public class GraphicsRunner extends JFrame implements KeyListener, MouseListener
 		}	
 	}
 	
+	//unused functions
+	@Override
+	public void keyTyped(KeyEvent e) {}	
 	@Override
 	public void mouseClicked(MouseEvent e) {}
-
 	@Override
 	public void mouseEntered(MouseEvent e) {}
-
 	@Override
 	public void mouseExited(MouseEvent e) {}
 

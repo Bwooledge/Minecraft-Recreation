@@ -178,7 +178,7 @@ public class Camera {
 		if(destroyed >= 360)
 		{
 			destroyed = 0;
-			Simulation.removeBlock(coords[0], coords[1], coords[2]);
+			Simulation.all_blocks[coords[2]][coords[1]][coords[0]] = null;
 			Artist.updateBlockList();
 			delay_frames = -8;
 		}

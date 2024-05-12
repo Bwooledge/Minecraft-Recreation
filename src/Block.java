@@ -103,6 +103,8 @@ public class Block {
 		double[] n = Simulation.cam.normal;
 		double[] r = Simulation.cam.right;
 		double[] u = Simulation.cam.up;
+		double[] ld = Simulation.light_dir;
+		double li = Simulation.light_intensity;
 		double clipping_dist = Simulation.cam.clipping_distance;
 		int w = GraphicsRunner.WIDTH;
 		int h = GraphicsRunner.HEIGHT;
@@ -115,7 +117,14 @@ public class Block {
 			double[] l1 = {verts[2][0] - verts[1][0], verts[2][1] - verts[1][1], verts[2][2] - verts[1][2]};
 			double[] l2 = {verts[0][0] - verts[1][0], verts[0][1] - verts[1][1], verts[0][2] - verts[1][2]};
 			double[] cross = {l1[1] * l2[2] - l1[2] * l2[1], l1[2] * l2[0] - l1[0] * l2[2], l1[0] * l2[1] - l1[1] * l2[0]};
-
+			
+			//light intensity for the face
+			double cross_len = Math.sqrt(Math.pow(cross[0], 2) + Math.pow(cross[1], 2) + Math.pow(cross[2], 2));
+			cross[0] /= cross_len;
+			cross[1] /= cross_len;
+			cross[2] /= cross_len;
+			double light = li * (-0.5 - (cross[0] * ld[0] + cross[1] * ld[1] + cross[2] * ld[2]));
+			
 			//don't draw if not facing camera; dots normal of triangle with vector to center of triangle
 			if(!invisible && cross[0] * ((verts[0][0] + verts[1][0] + verts[2][0]) / 3 + adj_pos[0]) 
 				+ cross[1] * ((verts[0][1] + verts[1][1] + verts[2][1]) / 3 + adj_pos[1]) 
@@ -160,8 +169,18 @@ public class Block {
 							screen_pts[1][i*2+(i==0?j:1-j)] = (int)(y_coord + 0.5);
 						}
 					}
-					//draw the pixel
-					g.setColor(palette[pixels[patterns[shown_faces.get(a)]][y][x]]);
+					
+					//adjust colors for lighting
+					Color base_col = palette[pixels[patterns[shown_faces.get(a)]][y][x]];
+					int[] rgb = {base_col.getRed(), base_col.getGreen(), base_col.getBlue()};
+					for(int i = 0; i < rgb.length; i++)
+					{
+						rgb[i] += rgb[i] * light;
+						if(rgb[i] > 255) rgb[i] = 255;
+					}
+					
+					//draw pixel
+					g.setColor(new Color(rgb[0], rgb[1], rgb[2]));
 					g.fillPolygon(screen_pts[0], screen_pts[1], 4);
 				}
 			}

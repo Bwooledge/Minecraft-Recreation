@@ -38,21 +38,21 @@ public class Player {
 		double theta = Math.atan2(cam.normal[2], cam.normal[0]);
 		double theta2 = theta - Math.PI/2;
 						
-		//move player according to input
+		//change velocity based on input
 		if(movement[0] != 0) vel[0] += smoothing * movement[0] * speed_multiplier;
 		else vel[0] = Math.abs(vel[0]) < smoothing ? 0 : vel[0] - smoothing * vel[0] / Math.abs(vel[0]);
 		if(movement[1] != 0) vel[2] += smoothing * movement[1] * speed_multiplier;
 		else vel[2] = Math.abs(vel[2]) < smoothing ? 0 : vel[2] - smoothing * vel[2] / Math.abs(vel[2]);
 		if(Math.abs(vel[0]) > max_speed * speed_multiplier) vel[0] = max_speed * speed_multiplier * vel[0] / Math.abs(vel[0]);
 		if(Math.abs(vel[2]) > max_speed * speed_multiplier) vel[2] = max_speed * speed_multiplier * vel[2] / Math.abs(vel[2]);
-		double c = Math.sqrt(vel[0] * vel[0] + vel[2] * vel[2]);
+		
+		//maintain max speed for diagonals
+		double c = Math.sqrt(Math.pow(vel[0], 2) + Math.pow(vel[2], 2));
 		if(c > max_speed * speed_multiplier)
 		{
 			vel[0] *= max_speed * speed_multiplier / c;
 			vel[2] *= max_speed * speed_multiplier / c;
 		}
-		position[0] += Math.cos(theta2) * vel[0] + Math.cos(theta) * vel[2];
-		position[2] += Math.sin(theta2) * vel[0] + Math.sin(theta) * vel[2];
 		
 		//gravity
 		vel[1] -= 0.125;
@@ -60,10 +60,11 @@ public class Player {
 		//jumping
 		if(jumping && grounded) vel[1] = 2.25;
 		
-		//vertical motion
+		//move player according to velocity
+		position[0] += Math.cos(theta2) * vel[0] + Math.cos(theta) * vel[2];
+		position[2] += Math.sin(theta2) * vel[0] + Math.sin(theta) * vel[2];
 		position[1] += vel[1];
 		
-		//collisions
 		checkCollisions();
 		
 		//camera bobbing
@@ -149,15 +150,15 @@ public class Player {
 			}
 		}
 		
-		if(!grounded)
+		//keep player on block when crouched
+		if(!grounded && crouched)
 		{
 			for(Block b: Artist.drawn_blocks)
 			{
 				//ignore if not close enough
 				if(Math.sqrt(Math.pow((b.coord[0]*16+b.scale/2) - position[0], 2) + Math.pow((b.coord[2]*16+b.scale/2) - position[2], 2)) > WIDTH + b.scale/Math.sqrt(2)) continue;
 				
-				//crouched collisions
-				if(crouched && position[1] - 1 < b.coord[1] * 16 + b.scale && position[1] > b.coord[1] * 16 + b.scale - leniency)
+				if(position[1] - 1 < b.coord[1] * 16 + b.scale && position[1] > b.coord[1] * 16 + b.scale - leniency)
 				{
 					if(position[0] + WIDTH/2 + leniency/5 > b.coord[0] * 16 && position[0] - WIDTH/2 - leniency/5 < b.coord[0] * 16 + b.scale
 							&& position[2] + WIDTH/2 + leniency/5 > b.coord[2] * 16 && position[2] - WIDTH/2 - leniency/5 < b.coord[2] * 16 + b.scale)
