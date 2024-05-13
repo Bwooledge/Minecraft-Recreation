@@ -211,11 +211,10 @@ public class Block {
 					+ cross[2] * ((verts[0][2] + verts[1][2] + verts[2][2]) / 3 + adj_pos[2]) > 0) continue;
 			
 			//instead of getting the corners of the pixels, just gets the corners of the face
+			double[] v = {verts[1][0] + adj_pos[0], verts[1][1] + adj_pos[1], verts[1][2] + adj_pos[2]};
 			int[][] screen_points = new int[2][4];
 			for(int i = 0; i < 4; i++)
 			{
-				double[] v = {verts[i][0] + adj_pos[0], verts[i][1] + adj_pos[1], verts[i][2] + adj_pos[2]};
-
 				double ndot = v[0] * n[0] + v[1] * n[1] + v[2] * n[2];				
 				double c = clipping_dist / Math.abs(ndot);
 				
