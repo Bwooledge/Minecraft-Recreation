@@ -6,6 +6,6 @@ Besides those improvements, I added numerous novel features to imitate the game 
 
 To run the sample scene I created, run the GraphicsRunner.java file. To edit the scene, change objects in the Simulation.java file. 
 
-Movement inputs are WASD, SHIFT is crouch, SPACE is jump, double-tapping W is sprint, and the number keys are selecting blocks. Camera movement is controlled by the mouse and blocks can be placed and broken with the right and left mouse buttons, respectively.
+WASD are movement, SHIFT is crouch, SPACE is jump, double-tapping W is sprint, and the number keys are selecting blocks. Camera movement is controlled by the mouse and blocks can be placed and broken with the right and left mouse buttons, respectively.
 
 Song credit: C418
