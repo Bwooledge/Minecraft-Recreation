@@ -106,8 +106,8 @@ public class Block {
 		double[] ld = Simulation.light_dir;
 		double li = Simulation.light_intensity;
 		double clipping_dist = Simulation.cam.clipping_distance;
-		int w = GraphicsRunner.WIDTH;
-		int h = GraphicsRunner.HEIGHT;
+		int w = GraphicsRunner.WIDTH / 2;
+		int h = GraphicsRunner.HEIGHT / 2;
 			
 		//draw each visible face
 		for(int a = 0; a < shown_faces.size(); a++)
@@ -135,6 +135,7 @@ public class Block {
 			double[] delta_v = {verts[3][0] - verts[2][0], verts[3][1] - verts[2][1], verts[3][2] - verts[2][2]};
 			
 			//draw each pixel
+			double[] base_v = {verts[1][0] + adj_pos[0], verts[1][1] + adj_pos[1], verts[1][2] + adj_pos[2]};
 			for(int x = 0; x < resolution; x++)
 			{
 				for(int y = 0; y < resolution; y++)
@@ -149,9 +150,9 @@ public class Block {
 					{
 						for(int j = 0; j < 2; j++)
 						{
-							double[] v = {verts[1][0] + adj_pos[0] + (x + i)*1.0/resolution * delta_h[0] + (y + j)*1.0/resolution * delta_v[0],
-									verts[1][1] + adj_pos[1] + (x + i)*1.0/resolution * delta_h[1] + (y + j)*1.0/resolution * delta_v[1],
-									verts[1][2] + adj_pos[2] + (x + i)*1.0/resolution * delta_h[2] + (y + j)*1.0/resolution * delta_v[2]};
+							double[] v = {base_v[0] + (x + i)*1.0/resolution * delta_h[0] + (y + j)*1.0/resolution * delta_v[0],
+									base_v[1] + (x + i)*1.0/resolution * delta_h[1] + (y + j)*1.0/resolution * delta_v[1],
+									base_v[2] + (x + i)*1.0/resolution * delta_h[2] + (y + j)*1.0/resolution * delta_v[2]};
 							double ndot = v[0] * n[0] + v[1] * n[1] + v[2] * n[2];				
 							double c = clipping_dist / Math.abs(ndot);
 							
@@ -161,12 +162,8 @@ public class Block {
 							v[2] *= c;
 							
 							//transform to 2D based on the camera vectors
-							double x_coord = w/2 + (r[0] * v[0] + r[1] * v[1] + r[2] * v[2]);
-							double y_coord = h/2 - (u[0] * v[0] + u[1] * v[1] + u[2] * v[2]);
-							
-							//order the points in the array properly
-							screen_pts[0][i*2+(i==0?j:1-j)] = (int)(x_coord + 0.5);
-							screen_pts[1][i*2+(i==0?j:1-j)] = (int)(y_coord + 0.5);
+							screen_pts[0][i*2+(i==0?j:1-j)] = (int)(w + 0.5 + (r[0] * v[0] + r[1] * v[1] + r[2] * v[2]));
+							screen_pts[1][i*2+(i==0?j:1-j)] = (int)(h + 0.5 - (u[0] * v[0] + u[1] * v[1] + u[2] * v[2]));
 						}
 					}
 					
