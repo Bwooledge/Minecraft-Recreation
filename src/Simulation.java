@@ -25,7 +25,7 @@ public class Simulation extends JPanel implements Runnable {
 	public static Player player = new Player(new double[] {300, 64, 300}, 5, 24);
 	public static Block[][][] all_blocks = new Block[64][16][64];
 	
-	public static double[] light_dir = {0.7/1.74, -1/1.74, 0.5/1.74};
+	public static double[] light_dir = {0.7, -1, 0.5};
 	public static double light_intensity = 0.3;
 	
 	//music player
@@ -66,6 +66,11 @@ public class Simulation extends JPanel implements Runnable {
 		//initialize lists of what will be drawn
 		Artist.updateBlockList();
 		Artist.updateFaces();
+
+		//normalize light_dir
+		double ld_len = Math.sqrt(Math.pow(light_dir[0], 2) + Math.pow(light_dir[1], 2) + Math.pow(light_dir[2], 2));
+		for(int i = 0; i < 3; i++)
+			light_dir[i] /= ld_len;
 		
 		//music
 		final JFXPanel fxPanel = new JFXPanel();
