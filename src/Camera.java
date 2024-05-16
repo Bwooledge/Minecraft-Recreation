@@ -222,9 +222,9 @@ public class Camera {
 	public int[] rayTrace()
 	{		
 		//values for parametric equations
-		double m1 = 1;
-		double m2 = normal[1] / normal[0];
-		double m3 = normal[2] / normal[0];
+		double m1 = normal[0];
+		double m2 = normal[1];
+		double m3 = normal[2];
 		double b1 = player.position[0] + position[0];
 		double b2 = player.position[1] + position[1];
 		double b3 = player.position[2] + position[2];
@@ -235,14 +235,16 @@ public class Camera {
 		{
 			Block b = Artist.drawn_blocks.get(i);
 			double[] adj_pos = {b.coord[0] * 16, b.coord[1] * 16, b.coord[2] * 16};
+			
 			for(int j = 0; j < b.shown_faces.size(); j++)
 			{
 				int[] face = b.faces[b.shown_faces.get(j)];
 				
-				//ignore faces that are the wrong direction
 				double[][] verts = new double[4][3];
 				for(int k = 0; k < 4; k++) 
 					verts[k] = new double[] {b.vertices[face[k]][0] + adj_pos[0], b.vertices[face[k]][1] + adj_pos[1], b.vertices[face[k]][2] + adj_pos[2]};
+				
+				//ignore faces that are the wrong direction
 				double[] l1 = {verts[2][0] - verts[1][0], verts[2][1] - verts[1][1], verts[2][2] - verts[1][2]};
 				double[] l2 = {verts[0][0] - verts[1][0], verts[0][1] - verts[1][1], verts[0][2] - verts[1][2]};
 				double[] cross = {l1[1] * l2[2] - l1[2] * l2[1], l1[2] * l2[0] - l1[0] * l2[2], l1[0] * l2[1] - l1[1] * l2[0]};
@@ -253,6 +255,7 @@ public class Camera {
 				
 				//time of intersection; simplified from: cross[0] * (m1 * t + b1) + cross[1] * (m2 * t + b2) + cross[2] * (m3 * t + b3) = d
 				double t = (d - (cross[0] * b1 + cross[1] * b2 + cross[2] * b3)) / (cross[0] * m1 + cross[1] * m2 + cross[2] * m3);
+				if(t < 0) continue;
 				
 				//point of intersection
 				double[] point = {m1 * t + b1, m2 * t + b2, m3 * t + b3};	
