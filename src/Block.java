@@ -95,9 +95,10 @@ public class Block {
 	public void draw(Graphics g, double[] adj_pos)
 	{
 		//alternative drawing styles
-		if(triangular) triangularDraw(g, adj_pos);
-		else if(!texture) outlineDraw(g, adj_pos);
-		if(triangular || !texture) return;
+		if(Simulation.simple) {
+			outlineDraw(g, adj_pos);
+			return;
+		}
 		
 		//variable intialization
 		double[] n = Simulation.cam.normal;
@@ -241,7 +242,7 @@ public class Block {
 				Color mainColor = palette[pixels[patterns[0]][0][0]];
 				if(edge_color == null) g.setColor(new Color(255 - mainColor.getRed(), 255 - mainColor.getGreen(), 255 - mainColor.getBlue()));
 				else g.setColor(edge_color);
-				((Graphics2D)g).setStroke(new BasicStroke(1));
+				((Graphics2D)g).setStroke(new BasicStroke(3));
 				g.drawPolygon(screen_points[0], screen_points[1], 4);
 			}
 		}

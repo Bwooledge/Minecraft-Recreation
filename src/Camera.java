@@ -170,12 +170,15 @@ public class Camera {
 		destroyed += destroy_speed;
 		
 		//draw arc
-		g.setColor(Color.WHITE);
-		((Graphics2D) g).setStroke(new BasicStroke(6));
-		g.drawArc(GraphicsRunner.WIDTH/2 - 50, GraphicsRunner.HEIGHT/2 - 50, 100, 100, 90, -(int)destroyed);
+		if(!Simulation.creative)
+		{
+			g.setColor(Color.WHITE);
+			((Graphics2D) g).setStroke(new BasicStroke(6));
+			g.drawArc(GraphicsRunner.WIDTH/2 - 50, GraphicsRunner.HEIGHT/2 - 50, 100, 100, 90, -(int)destroyed);
+		}
 		
 		//break block when arc is full
-		if(destroyed >= 360)
+		if(destroyed >= 360 || Simulation.creative)
 		{
 			destroyed = 0;
 			Simulation.all_blocks[coords[2]][coords[1]][coords[0]] = null;

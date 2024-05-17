@@ -62,7 +62,7 @@ public class GraphicsRunner extends JFrame implements KeyListener, MouseListener
 		else if (e.getKeyCode() == KeyEvent.VK_D)
 			player.setMovement(0, 1);
 		else if (e.getKeyCode() == KeyEvent.VK_SPACE)
-			player.jumping = true;
+			player.jump();
 		
 		//crouch
 		else if (e.getKeyCode() == KeyEvent.VK_SHIFT)
@@ -71,6 +71,11 @@ public class GraphicsRunner extends JFrame implements KeyListener, MouseListener
 		//select block
 		else if(e.getKeyCode() >= 48 && e.getKeyCode() <= 57) 
 			cam.setCurrentBlock(e.getKeyCode() - 48);
+		
+		//change settings
+		else if(e.getKeyCode() == KeyEvent.VK_Q) Simulation.creative = Simulation.creative ? false : true;
+		else if(e.getKeyCode() == KeyEvent.VK_E) Simulation.simple = Simulation.simple ? false : true;
+		else if(e.getKeyCode() == KeyEvent.VK_R) Simulation.locked = Simulation.locked ? false : true;
 
 		//quit
 		else if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
@@ -89,7 +94,7 @@ public class GraphicsRunner extends JFrame implements KeyListener, MouseListener
 		else if (e.getKeyCode() == KeyEvent.VK_D)
 			player.setMovement(0, 0);
 		else if (e.getKeyCode() == KeyEvent.VK_SPACE)
-			player.jumping = false;
+			player.unjump();
 
 		//crouch
 		else if (e.getKeyCode() == KeyEvent.VK_SHIFT)
@@ -97,6 +102,8 @@ public class GraphicsRunner extends JFrame implements KeyListener, MouseListener
 	}
 
 	public void mouseMoved(MouseEvent e) {
+		if(!Simulation.locked) return;
+		
         //change where the camera should be facing
         cam.deltaX += e.getX() - centeredX;
         cam.deltaY += -(e.getY() - centeredY);
@@ -104,6 +111,7 @@ public class GraphicsRunner extends JFrame implements KeyListener, MouseListener
         //recenter mouse
         centeredX = WIDTH / 2 + (1920 - WIDTH)/2;
         centeredY = HEIGHT / 2 + (1080 - HEIGHT)/2;
+        
         robot.mouseMove(centeredX, centeredY);
     }
 	

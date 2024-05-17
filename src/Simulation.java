@@ -31,6 +31,11 @@ public class Simulation extends JPanel implements Runnable {
 	//music player
 	public static MediaPlayer mediaPlayer;
 	
+	//controls
+	public static boolean simple = false;
+	public static boolean creative = false;
+	public static boolean locked = true;
+	
 	public Simulation()
 	{
 		setVisible(true);
@@ -97,12 +102,6 @@ public class Simulation extends JPanel implements Runnable {
 		cam.rotate();
 	}
 	
-	public static void newBlock(int x, int y, int z, Block b)
-	{
-		all_blocks[z][y][x] = b;
-		b.coord = new int[]{x, y, z};
-	}
-
 	@Override
 	public void run() {
 		repaint();
@@ -120,4 +119,11 @@ public class Simulation extends JPanel implements Runnable {
 		   	} 		
 		} catch(Exception e){}
 	}
+	
+	public static void newBlock(int x, int y, int z, Block b)
+	{
+		all_blocks[z][y][x] = b;
+		b.coord = new int[]{x, y, z};
+	}
+
 }

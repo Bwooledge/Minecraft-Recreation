@@ -20,7 +20,8 @@ public class Artist {
 		double[] n = cam.normal;
 		
 		//background
-		g.setColor(new Color(150, 150, 255));
+		g.setColor(new Color(150, 200, 255));
+		g.setColor(new Color(80, 80, 80));
 		g.fillRect(0,  0, GraphicsRunner.WIDTH, GraphicsRunner.HEIGHT);
 		
 		//get new block order depending on player position

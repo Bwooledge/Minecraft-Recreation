@@ -6,6 +6,7 @@ public class Player {
 	public boolean grounded = false;
 	public boolean jumping = false;
 	public boolean crouched = false;
+	public boolean flying = false;
 	public boolean crouch_trapped = false;
 	public final double WIDTH;
 	public double HEIGHT;
@@ -16,6 +17,7 @@ public class Player {
 	private double max_speed = 1.75;
 	private double smoothing = 0.2;
 	private long last_forward = System.nanoTime() - 1000000000;
+	private long last_jump = System.nanoTime() - 1000000000;
 	private double[] vel = {0, 0, 0};
 	
 	public Player(double[] position, double width, double height)
@@ -55,7 +57,7 @@ public class Player {
 		}
 		
 		//gravity
-		vel[1] -= 0.125;
+		if(!flying) vel[1] -= 0.125;
 		
 		//jumping
 		if(jumping && grounded) vel[1] = 2.25;
@@ -184,6 +186,11 @@ public class Player {
 	public void crouch()
 	{
 		if(crouched) return;
+		if(flying) 
+		{
+			vel[1] = -3;
+			return;
+		}
 		crouched = true;
 		HEIGHT *= 0.5;
 		speed_multiplier = 0.4;
@@ -191,6 +198,11 @@ public class Player {
 	
 	public void uncrouch()
 	{
+		if(flying) 
+		{
+			vel[1] = 0;
+			return;
+		}
 		if(!crouched) return;
 		
 		for(Block b: Artist.drawn_blocks)
@@ -215,6 +227,20 @@ public class Player {
 		speed_multiplier = 1;
 	}
 
+	public void jump()
+	{
+		if(Simulation.creative && System.nanoTime() - last_jump < 200000000) flying = flying ? false : true;
+		if(flying) vel[1] = 3;
+		else jumping = true;	
+	}
+	
+	public void unjump()
+	{
+		if(flying) vel[1] = 0;
+		jumping = false;
+		last_jump = System.nanoTime();
+	}
+	
 	public void setMovement(int i, int v)
 	{
 		movement[i] = v;
@@ -240,8 +266,7 @@ public class Player {
 				else last_forward = System.nanoTime();
 			}
 			else if(System.nanoTime() - last_forward < 100000000) speed_multiplier = 1.5;
-		}
-			
+		}	
 	}
 
 }
